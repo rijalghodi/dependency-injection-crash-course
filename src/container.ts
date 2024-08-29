@@ -1,9 +1,7 @@
-import { Logger } from "./services/Logger";
-import { ProfileService } from "./services/ProfileService";
+import { DbService } from "./services/DbService";
 import { UserService } from "./services/UserService";
 
 console.log("container initialized");
 
-export const logger = new Logger();
-export const userService = new UserService(logger);
-export const profileService = new ProfileService(logger, userService);
+export const dbService = new DbService();
+export const userService = new UserService(dbService); // <-- Singleton pattern

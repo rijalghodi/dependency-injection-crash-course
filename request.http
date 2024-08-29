@@ -1,7 +1,5 @@
-GET http://localhost:3000/
-
 ###
 GET http://localhost:3000/user
 
 ###
-GET http://localhost:3000/profile
+GET http://localhost:3000/user/1
