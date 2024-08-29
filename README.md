@@ -12,26 +12,50 @@ router.get("/user", (_: Request, res: Response) => {
 });
 ```
 
-Running this app (`yarn dev`) and making requests to `/user` or `/user/1` will create a new instance of `UserService` for each request, as shown in the log:
+Running this app (`yarn dev`) and making requests to `/user` will create a new instance of `UserService` for each request
+
+## Execution
+
+After running first time:
 
 ```bash
--- User Service initialized --
--- DB Service initialized --
-Fetching all user data...
 
--- User Service initialized --
--- DB Service initialized --
-Fetching single user data...
-
--- User Service initialized --
--- DB Service initialized --
-Fetching all user data...
-
--- User Service initialized --
--- DB Service initialized --
-Fetching single user data...
 ```
 
-Imagine the impact if 1,000 requests hit the service simultaneously. It would create 1,000 instances of both the `UserService` and `DB Service`, which is inefficient and problematic.
+After request GET /user:
+
+```bash
+-- User Service instance created --
+-- DB Service instance created --
+Fetching all user data...
+```
+
+After request POST /login
+
+```bash
+-- Auth Service instance created --
+-- DB Service instance created --
+login...
+```
+
+After request GET /user:
+
+```bash
+-- User Service instance created --
+-- DB Service instance created --
+Fetching all user data...
+```
+
+After request POST /login
+
+```bash
+-- Auth Service instance created --
+-- DB Service instance created --
+login...
+```
+
+As you see, everytime I hit endpoint, new services created
 
 To address this, we will use the Singleton pattern to manage class instances. Check out the `level-1` branch to see how this is implemented.
+
+Imagine the impact if 1,000 requests hit the service simultaneously. It would create 1,000 instances of both the `UserService` and `DB Service`, which is inefficient and problematic.
