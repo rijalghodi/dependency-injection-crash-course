@@ -1,4 +1,5 @@
 import express from "express";
+import authRoute from "./routes/authRoute";
 import userRoute from "./routes/userRoute";
 
 const app = express();
@@ -9,6 +10,7 @@ app.use(express.json());
 
 // Use the user route
 app.use(userRoute);
+app.use(authRoute);
 
 // Start the server
 app.listen(PORT, () => {});

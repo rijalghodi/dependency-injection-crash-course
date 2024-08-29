@@ -14,12 +14,4 @@ export class UserService {
     const users = this.db.data;
     return users;
   }
-
-  getUser(id: string): User | null {
-    console.log("Fetching single user data...");
-    const users = this.db.data;
-    const user = users.find((user) => user.id === id);
-    if (!user) return null;
-    return user;
-  }
 }

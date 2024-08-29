@@ -2,14 +2,6 @@
 
 Class initialization can be expensive in terms of both computational resources and time. To minimize these costs, we should aim to initialize a class only once and reuse that instance wherever needed. This approach is known as the Singleton principle.
 
-## The Problem with Non-Singleton Design
-
-Without using the Singleton pattern, multiple instances of a class might be created unnecessarily, leading to increased resource usage and potential conflicts. For example, when processing payments, you might have several possible payment methods like PayPal, Stripe, Visa, or Mastercard. If each of these were instantiated repeatedly, it would waste resources and reduce performance.
-
-## The Singleton Principle
-
-The Singleton principle ensures that a class has only one instance throughout the application and provides a global point of access to that instance. This reduces memory consumption and improves performance by preventing redundant initializations.
-
 ## Implementation
 
 ### Step 1: Creating a Class
@@ -71,16 +63,32 @@ By following this approach, we ensure that class instances are reused efficientl
 
 Run the app and make a request. You will see the following output in the console:
 
+After init app:
+
 ```bash
 container initialized
 -- DB Service initialized --
 -- User Service initialized --
-Fetching all user data...
-Fetching single user data...
-Fetching all user data...
-Fetching single user data...
-Fetching single user data...
+-- Auth Service instance created --
+```
+
+After request GET /user
+```bash
 Fetching all user data...
 ```
 
-Initially, the system initializes all classes (`DBService` and `UserService`). These instances are then reused for every request.
+After request POST /login
+```bash
+login...
+```
+After request GET /user again
+```bash
+Fetching all user data...
+```
+
+After request POST /login again
+```bash
+login...
+```
+
+Initially, the system initializes all classes (`DBService`, `UserService`, and `AuthService`). These instances are then reused for every request.
