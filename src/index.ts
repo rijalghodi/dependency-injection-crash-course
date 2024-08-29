@@ -1,5 +1,4 @@
 import express from "express";
-import profileRoute from "./routes/profileRoute";
 import userRoute from "./routes/userRoute";
 
 const app = express();
@@ -14,7 +13,6 @@ app.get("/", (_, res) => {
 
 // Use the user route
 app.use(userRoute);
-app.use(profileRoute);
 
 // Start the server
 app.listen(PORT, () => {});

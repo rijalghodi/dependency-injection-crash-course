@@ -1,27 +1,25 @@
-import { Logger } from "./Logger";
-
-interface User {
-  username: string;
-  id: string;
-}
+import { User } from "../types";
+import { DbService } from "./DbService";
 
 export class UserService {
-  private logger: Logger;
-
-  constructor(logger: Logger) {
-    this.logger = logger;
-
-    console.log("UserService initialized");
+  constructor() {
+    console.log("-- User Service initialized --");
   }
 
-  getUser(): User {
-    this.logger.log("Fetching user data...");
-    return user;
+  getAllUser(): User[] | null {
+    const db = new DbService(); // <-- Class initialization, this is a problem
+    const users = db.data;
+    console.log("Fetching all user data...");
+    return users;
+  }
+
+  getUser(id: string): User | null {
+    const db = new DbService(); // <-- Class initialization, this is a problem
+    const data = db.data.find((value) => value.id === id);
+    console.log("Fetching single user data...");
+    if (!data) {
+      return null;
+    }
+    return data;
   }
 }
-
-// Database simulation
-const user = {
-  username: "user123",
-  id: "1",
-};
