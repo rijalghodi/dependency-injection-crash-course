@@ -1,86 +1,61 @@
-# Level 1 - Singleton
+# Level 2 - Dependency Injection Container
 
-Class initialization can be expensive in terms of both computational resources and time. To minimize these costs, we should aim to initialize a class only once and reuse that instance wherever needed. This approach is known as the Singleton principle.
+While the Singleton pattern addresses class initialization issues, it introduces new challenges:
 
-## The Problem with Non-Singleton Design
+1. Eager Loading: All class instances are created at build time, preventing lazy loading.
+2. Decentralized Management: Instance creation and management are scattered across the codebase.
 
-Without using the Singleton pattern, multiple instances of a class might be created unnecessarily, leading to increased resource usage and potential conflicts. For example, when processing payments, you might have several possible payment methods like PayPal, Stripe, Visa, or Mastercard. If each of these were instantiated repeatedly, it would waste resources and reduce performance.
+Solution: Dependency Injection (DI) Container
 
-## The Singleton Principle
+A DI Container offers several advantages:
 
-The Singleton principle ensures that a class has only one instance throughout the application and provides a global point of access to that instance. This reduces memory consumption and improves performance by preventing redundant initializations.
+1. Centralized Management: A single 'Container' class stores and manages all class instances.
+2. Lazy Loading: Instances can be created on-demand, improving performance and resource usage.
+3. Dependency Resolution: The container handles class dependencies automatically.
+4. Flexible Registration: Classes can be easily registered and configured within the container.
 
-## Implementation
+## Implementation:
 
-### Step 1: Creating a Class
-
-First, we create a class that needs to be reused. For example, consider the `DbService` class in `/src/services/DbService.ts`. If another class depends on `DbService`, instead of creating a new instance of `DbService` every time, we pass the existing instance through the constructor.
-
-### Step 2: Using Dependency Injection
-
-In `/src/services/UserService.ts`, we inject the `DbService` instance into `UserService` via the constructor, ensuring that `UserService` uses the same instance of `DbService`:
-
-```ts
-// /src/services/UserService.ts
-export class UserService {
-  private db: DbService;
-
-  constructor(db: DbService) {
-    this.db = db; // <-- Singleton
-    console.log("UserService initialized");
-  }
-
-  // Additional methods...
-}
-```
-
-### Step 3: Initialize All Classes at Startup
-
-We then initialize all necessary class instances at startup, ensuring only one instance of each class is created. This is done in `/src/container.ts`:
-
-```ts
-// /src/container.ts
-import { DbService } from "./services/DbService";
-import { UserService } from "./services/UserService";
-
-export const dbService = new DbService();
-export const userService = new UserService(dbService); // <--
-```
-
-Here, `dbService` and `userService` are initialized once and can be reused throughout the application.
-
-### Step 4: Using Singleton Instances Across the Application
-
-Finally, we use these singleton instances wherever required, as shown in `/src/routes/userRoute.ts`:
-
-```ts
-// /src/routes/userRoute.ts
-import { userService } from "../container";
-
-const router = Router();
-
-router.get("/user", (_: Request, res: Response) => {
-  const data = userService.getAllUser();
-  res.send(data);
-});
-```
-
-By following this approach, we ensure that class instances are reused efficiently, conserving resources and improving application performance.
+- Create a `Container` class to store and manage class instances (Open `/src/container`)
+- Register classes and their dependencies in the container (Open `/src/container-instance`)
+- Resolve instances through the container when needed (Open `/src/routes/authRoute` and `/src/routes/userRoute`)
 
 ## Execution
 
-Run the app and make a request. You will see the following output in the console:
+Try to run `yarn dev` and do some requests.
+
+First running app:
 
 ```bash
-container initialized
--- DB Service initialized --
--- User Service initialized --
-Fetching all user data...
-Fetching single user data...
-Fetching all user data...
-Fetching single user data...
-Fetching single user data...
+container instance run
+-- Factory db registered --
+-- Factory user registered --
+-- Factory auth registered --
+```
+
+After request `GET /user`
+
+```bash
+-- DB Service instance created --
+-- User Service instance created --
 Fetching all user data...
 ```
 
-Initially, the system initializes all classes (`DBService` and `UserService`). These instances are then reused for every request.
+After request `POST /login`
+
+```bash
+-- Auth Service instance created --
+login...
+```
+
+After request `GET /user` again:
+
+```bash
+Fetching all user data...
+```
+
+After request `POST /login` again:
+
+```bash
+login...
+```
